@@ -1,5 +1,7 @@
 package conta;
 
+import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import conta.controller.ContaController;
@@ -16,20 +18,11 @@ public class Menu {
 		
 		Scanner leia = new Scanner(System.in);
 		
-		int opcao, numero, agencia, tipo, aniversario;
+		int opcao, numero, agencia, tipo, aniversario, numeroDestino;
 		String titular;
-		float saldo, limite;
+		float saldo, limite, valor;
 
 		System.out.println("\n Criar Contas \n");
-		
-		ContaCorrente cc1 = new ContaCorrente(contas.gerarNumero(), 123, 1, "João da Silva", 1000f, 100.00f);
-		contas.cadastrar(cc1);
-		ContaCorrente cc2 = new ContaCorrente(contas.gerarNumero(), 124, 1, "Maria da Silva", 1000f, 100.00f);
-		contas.cadastrar(cc2);
-		ContaPoupanca cp1 = new ContaPoupanca(contas.gerarNumero(), 125, 1, "Claudio da Silva", 4000f, 12);
-		contas.cadastrar(cp1);
-		ContaPoupanca cp2 = new ContaPoupanca(contas.gerarNumero(), 126, 1, "José da Silva", 1000f, 15);
-		contas.cadastrar(cp2);
 		
 		while (true) {
 
@@ -52,9 +45,14 @@ public class Menu {
 			System.out.println("**************************************************");
 			System.out.println("                                                  ");
 			System.out.println("Insira a opção desejada:");
-
-			opcao = leia.nextInt();
-
+				
+			try {
+				opcao = leia.nextInt();	
+			} catch (InputMismatchException e){
+				System.out.println("\nDigite valores inteiros!");
+				leia.nextLine();
+				opcao=0;
+			}
 			if (opcao == 9) {
 				System.out.println("\nObrigado por escolher nossos serviços!");
 				leia.close();
@@ -160,18 +158,58 @@ public class Menu {
 					break;
 				case 6:
 					System.out.println("Saque\n\n");
+					
+					System.out.println("Digite o número da conta: ");
+					numero = leia.nextInt();
+					
+					do { 
+						System.out.println("Digite o valor do saque (R$): ");
+						valor = leia.nextFloat();
+					}while(valor <= 0);
+					
+					contas.sacar(numero, valor);
 
+					keyPress();
 					break;
 				case 7:
 					System.out.println("Depósito\n\n");
+					
+					System.out.println("Digite o Numero da conta: ");
+					numero = leia.nextInt();
+					
+					do {
+						System.out.println("Digite o Valor do Depósito (R$): ");
+						valor = leia.nextFloat();
+					}while(valor <= 0);
 
+					contas.depositar(numero, valor);
+					
+
+					keyPress();
 					break;
 				case 8:
 					System.out.println("Transferência entre Contas\n\n");
 
+					System.out.println(Cores.TEXT_WHITE + "Transferência entre Contas\n\n");
+
+					System.out.println("Digite o Numero da Conta de Origem: ");
+					numero = leia.nextInt();
+					System.out.println("Digite o Numero da Conta de Destino: ");
+					numeroDestino = leia.nextInt();
+					
+					do {
+						System.out.println("Digite o Valor da Transferência (R$): ");
+						valor = leia.nextFloat();
+					}while(valor <= 0);
+					
+					contas.transferir(numero, numeroDestino, valor);
+					
+					keyPress();
 					break;
 				default:
 					System.out.println("\nOpção Inválida!\n");
+					
+					keyPress();
 					break;
 				}
 			}
@@ -191,7 +229,16 @@ public class Menu {
 	}
 
 	private static void keyPress() {
-		// TODO Auto-generated method stub
+		
+		try {
+			
+			System.out.println("\n Pressione Enter para continuar");
+			System.in.read();
+		}catch (IOException e) {
+			
+			System.out.println("Você pressionou uma tecla diferente de enter!");
+			
+		}
 		
 	}
 }
